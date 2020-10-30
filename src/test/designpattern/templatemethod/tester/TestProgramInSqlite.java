@@ -52,7 +52,7 @@ public class TestProgramInSqlite
 		// 建立測試用的假物件資料
 		List<Document> docs = new ArrayList<Document>();
 		Inner inner = new Inner("A12345", "0", nowTime);
-		inner.setAttributeB("Inner attribute data.");
+		inner.setAttributeB("Modify inner attributeB data test.");
 		docs.add(inner);
 		docs.add(new POD("AAA11223", "A", nowTime));
 		docs.add(new XSection("AAJ11111", "0", nowTime));
