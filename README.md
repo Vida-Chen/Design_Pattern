@@ -13,3 +13,80 @@
  
  * test.designpattern.templatemethod.DocumentsInterface - concept algorithm
  * test.designpattern.templatemethod.DocumentsInterfaceInSqlite - 除concept algorithm外，佐以寫入資料至sqlite，故需載入額外的sqlite-jdbc jar.
+ 
+### 2. 策略模式(Strategy Method)
+> 應用說明：外拋資料給下游單位，處理三件事 - 拋檔案、拋資料、寄通知信件，
+> 其中拋檔案尚未確定以何種方式進行(e.g. ftp or share folder...etc)，
+> 故將拋檔行為定抽出到interface(IFileProcessor, sendFile方法)，
+> 實際執行內容交由各別processor實作(FTPFileProcessor、ShareFolderFileProcessor)，
+> 保留彈性給後來確定實作機制時才動態決定真正的實作方法。
+
+IFileProcessor interface
+```sh
+public interface IFileProcessor
+{
+	public void sendFile();
+}
+```
+
+FTPFileProcessor
+
+```sh
+public class FTPFileProcessor implements IFileProcessor
+{
+	public void sendFile()
+	{
+		System.out.println("Send file by ftp!");
+	}
+}
+```
+
+ShareFolderFileProcessor
+
+```sh
+public class ShareFolderFileProcessor implements IFileProcessor
+{
+	public void sendFile()
+	{
+		System.out.println("Send file by share folder!");
+	}
+}
+```
+
+TestProgram
+
+```sh
+public class TestProgram
+{
+	public static void main(String[] args)
+	{
+		// 待真正實作時才決定實作的方法為何? (此例可選擇以ftp or sharefolder方式, 拋資料給下游系統)
+		ToDownstreamSender sender = new ToDownstreamSender(
+				new FTPFileProcessor());
+		// sender.setFileProcessingWay(new ShareFolderFileProcessor());
+		sender.processing();
+	}
+}
+```
+
+ToDownstreamSender
+
+```sh
+public class ToDownstreamSender
+{
+	IFileProcessor fileProcessor;
+
+	public ToDownstreamSender(IFileProcessor fileProcessor)
+	{
+		this.fileProcessor = fileProcessor;
+	}
+
+	public void processing()
+	{
+		this.fileProcessor.sendFile();
+		sendData();
+		sendMail();
+	}
+	...以下省略
+}
+```
